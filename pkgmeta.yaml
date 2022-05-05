@@ -1,8 +1,8 @@
-package-as: AdiBags BoE & BoA
+package-as: AdiBags Bound
 enable-nolib-creation: no
 
 move-folders:
-    AdiBags BoE & BoA/AdiBags BoE & BoA: AdiBags BoE & BoA
+    AdiBags_Bound/AdiBags_Bound: AdiBags_Bound
 
 manual-changelog:
     filename: CHANGELOG.md
@@ -17,4 +17,3 @@ ignore:
     - README.md
     - .editorconfig
     - .github
-    

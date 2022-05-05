@@ -1,4 +1,4 @@
-# AdiBags BoE & BoA
+# AdiBags Bound
 Filters for BoE and BoA categories in AdiBags.
 
 I am not the Original author of this addon.

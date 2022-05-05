@@ -1,6 +1,6 @@
 ## Custom License
 
-Copyright (c) 2021 Lucas Vienna, Spanky, outroot
+Copyright (c) 2022 Lucas Vienna, Spanky, outroot
 
 This document and the software here mentioned refers to any and all code of this project, but none of the artwork and media assets. 
 
