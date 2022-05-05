@@ -9,4 +9,7 @@
 ## DefaultState: Enabled
 ## X-License: MIT
 
+## X-Wago-ID: 2jK8W06y
+## X-Curse-Project-ID: 620793
+
 Main.lua
