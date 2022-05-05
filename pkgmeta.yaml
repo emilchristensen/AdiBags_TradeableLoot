@@ -1,0 +1,20 @@
+package-as: AdiBags BoE & BoA
+enable-nolib-creation: no
+
+move-folders:
+    AdiBags BoE & BoA/AdiBags BoE & BoA: AdiBags BoE & BoA
+
+manual-changelog:
+    filename: CHANGELOG.md
+    markup-type: markdown
+
+license-output: LICENSE.txt
+
+ignore:
+    - CHANGELOG.md
+    - CODE_OF_CONDUCT.md
+    - LICENSE.md
+    - README.md
+    - .editorconfig
+    - .github
+    

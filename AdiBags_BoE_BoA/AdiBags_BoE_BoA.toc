@@ -1,0 +1,12 @@
+## Interface: 90200
+
+## Title: AdiBags - Filter for BoE/BoA
+## Notes: Adds BoE/BoA filters to AdiBags.
+## Author: Avyiel, Spanky, Outroot
+## Version: v2.0
+
+## Dependencies: AdiBags
+## DefaultState: Enabled
+## X-License: MIT
+
+Main.lua
