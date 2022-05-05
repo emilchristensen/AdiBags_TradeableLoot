@@ -13,7 +13,6 @@ license-output: LICENSE.txt
 ignore:
     - CHANGELOG.md
     - CODE_OF_CONDUCT.md
-    - LICENSE.md
     - README.md
     - .editorconfig
     - .github
