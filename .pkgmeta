@@ -1,4 +1,4 @@
-package-as: AdiBags Bound
+package-as: AdiBags_Bound
 enable-nolib-creation: no
 
 move-folders:
