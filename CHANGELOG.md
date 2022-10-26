@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.6.0] 2022-10-16
+### Changed
+- Bumped TOC to 10.0.0
+
 ## [0.5.0] 2022-08-17
 ### Changed
 - Bumped TOC to 9.2.7
