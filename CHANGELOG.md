@@ -4,8 +4,17 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.0] 2022-10-28
+### Added
+- Scanned items are now cached
 
-## [0.6.0] 2022-10-16
+### Changed
+- Tooltip scanning now more efficient & resilient
+
+### Fixed
+- Categories are now set properly again
+
+## [0.6.0] 2022-10-26
 ### Changed
 - Bumped TOC to 10.0.0
 
