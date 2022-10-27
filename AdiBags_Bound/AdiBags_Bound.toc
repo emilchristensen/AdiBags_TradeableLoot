@@ -1,13 +1,17 @@
 ## Interface: 100000
 
-## Title: AdiBags - Filter for BoE/BoA
+## Title: AdiBags - BoE/BoA
 ## Notes: Adds BoE/BoA filters to AdiBags.
 ## Author: Avyiel, Spanky, Outroot
 ## Version: @project-version@
 
-## Dependencies: AdiBags
 ## DefaultState: Enabled
+## Dependencies: AdiBags
+#@alpha@
+## OptionalDeps: BugSack, BugGrabber
+#@end-alpha@
 
+## X-Date: @project-date-iso@
 ## X-Category: Bags & Inventory
 ## X-License: MIT
 
@@ -15,3 +19,7 @@
 ## X-Wago-ID: 2jK8W06y
 
 Main.lua
+
+#@debug@
+## Version: DEV
+#@end-debug@
