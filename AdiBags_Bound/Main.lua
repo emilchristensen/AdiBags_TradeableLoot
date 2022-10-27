@@ -107,6 +107,8 @@ end)({
 		["Check this if you want a section for BoE items."] = true,
 		["Enable BoA"] = true,
 		["Check this if you want a section for BoA items."] = true,
+		["Enable BoP"] = true,
+		["Check this if you want a section for BoP (Soulbound) items."] = true,
 	},
 	["deDE"] = {},
 	["esES"] = {},
@@ -138,6 +140,7 @@ function filter:OnInitialize()
 		profile = {
 			enableBoE = true,
 			enableBoA = true,
+			enableBoP = false,
 		},
 	})
 end
@@ -155,6 +158,12 @@ function filter:GetOptions()
 			desc = L["Check this if you want a section for BoA items."],
 			type = "toggle",
 			order = 20,
+		},
+		enableBoP = {
+			name = L["Enable BoP"],
+			desc = L["Check this if you want a section for BoP (Soulbound) items."],
+			type = "toggle",
+			order = 30,
 		},
 	}, addon:GetOptionHandler(self, false, function() return self:Update() end)
 end
@@ -240,6 +249,8 @@ function filter:GetCategoryLabel(category)
 		return S_BOE
 	elseif (category == S_BOA) and self.db.profile.enableBoA then
 		return S_BOA
+	elseif (category == S_BOP) and self.db.profile.enableBoP then
+		return S_BOP
 	else
 		return nil
 	end
