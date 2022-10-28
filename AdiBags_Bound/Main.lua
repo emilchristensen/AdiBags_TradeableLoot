@@ -46,12 +46,18 @@ local tonumber = tonumber
 
 -- WoW API
 -----------------------------------------------------------
-local CreateFrame = CreateFrame
-local GetLocale = GetLocale
-local GetItemInfo = GetItemInfo
-local GetBuildInfo = GetBuildInfo
-local GetAddOnInfo = GetAddOnInfo
-local GetNumAddOns = GetNumAddOns
+local CreateFrame = _G.CreateFrame
+local GetLocale = _G.GetLocale
+local GetItemInfo = _G.GetItemInfo
+local GetBuildInfo = _G.GetBuildInfo
+local GetAddOnInfo = _G.GetAddOnInfo
+local GetNumAddOns = _G.GetNumAddOns
+local ItemLocation = _G.ItemLocation
+local C_Item_GetItemInventoryType = _G.C_Item.GetItemInventoryType
+
+-- WoW10 API
+-----------------------------------------------------------
+local C_TooltipInfo_GetBagItem = C_TooltipInfo and C_TooltipInfo.GetBagItem
 
 -- WoW Strings
 -----------------------------------------------------------
@@ -60,6 +66,10 @@ local S_ITEM_BOA = ITEM_ACCOUNTBOUND
 local S_ITEM_BOA2 = ITEM_BNETACCOUNTBOUND
 local S_ITEM_BOA3 = ITEM_BIND_TO_BNETACCOUNT
 local S_ITEM_BOE = ITEM_BIND_ON_EQUIP
+
+-- WoW Numbers
+-----------------------------------------------------------
+local N_BANK_CONTAINER = BANK_CONTAINER
 
 -- Constants
 -----------------------------------------------------------
@@ -109,8 +119,16 @@ end)({
 		["Check this if you want a section for BoE items."] = true,
 		["Enable BoA"] = true,
 		["Check this if you want a section for BoA items."] = true,
-		["Enable BoP"] = true,
-		["Check this if you want a section for BoP (Soulbound) items."] = true,
+		["Soulbound"] = true,
+		["Enable Soulbound"] = true,
+		["Check this if you want a section for BoP items."] = true,
+		["Only Equipable"] = true,
+		["Only filter equipable soulbound items."] = true,
+
+		-- Categories
+		[S_BOA] = "BoA",
+		[S_BOE] = "BoE",
+		[S_BOP] = "Soulbound",
 	},
 	["deDE"] = {},
 	["esES"] = {},
@@ -133,7 +151,7 @@ end)({
 --------------------------------------------------------------------------------
 
 -- Register our filter with AdiBags
-local filter = AdiBags:RegisterFilter("Bound", 92, "ABEvent-1.0")
+local filter = AdiBags:RegisterFilter("Bound", 70, "ABEvent-1.0")
 filter.uiName = L["Bound"]
 filter.uiDesc = L["Put BoE and BoA items in their own sections."]
 
@@ -144,6 +162,7 @@ function filter:OnInitialize()
 			enableBoE = true,
 			enableBoA = true,
 			enableBoP = false,
+			onlyEquipableBoP = true,
 		},
 	})
 end
@@ -155,19 +174,35 @@ function filter:GetOptions()
 			name = L["Enable BoE"],
 			desc = L["Check this if you want a section for BoE items."],
 			type = "toggle",
+			width = "double",
 			order = 10,
 		},
 		enableBoA = {
 			name = L["Enable BoA"],
 			desc = L["Check this if you want a section for BoA items."],
 			type = "toggle",
+			width = "double",
 			order = 20,
 		},
-		enableBoP = {
-			name = L["Enable BoP"],
-			desc = L["Check this if you want a section for BoP (Soulbound) items."],
-			type = "toggle",
-			order = 30,
+		bound = {
+			name = L["Soulbound"],
+			desc = "Soulbound stuff",
+			type = "group",
+			inline = true,
+			args = {
+				enableBoP = {
+					name = L["Enable Soulbound"],
+					desc = L["Check this if you want a section for BoP items."],
+					type = "toggle",
+					order = 10,
+				},
+				onlyEquipableBoP = {
+					name = L["Only Equipable"],
+					desc = L["Only filter equipable soulbound items."],
+					type = "toggle",
+					order = 20,
+				},
+			},
 		},
 	}, AdiBags:GetOptionHandler(self, false, function() return self:Update() end)
 end
@@ -192,7 +227,11 @@ end
 -- Tooltip used for scanning.
 -- Let's keep this name for all scanner addons.
 local _SCANNER = "AVY_ScannerTooltip"
-local Scanner = _G[_SCANNER] or CreateFrame("GameTooltip", _SCANNER, WorldFrame, "GameTooltipTemplate")
+local Scanner
+if not Private.WoW10 then
+	-- This is not needed on WoW10, since we can use C_TooltipInfo.GetBagItem
+	Scanner = _G[_SCANNER] or CreateFrame("GameTooltip", _SCANNER, WorldFrame, "GameTooltipTemplate")
+end
 
 -- Cache of information objects,
 -- globally available so addons can share it.
@@ -200,63 +239,106 @@ local Cache = AVY_ItemBindInfoCache or {}
 AVY_ItemBindInfoCache = Cache
 
 function filter:Filter(slotData)
-	if (Cache[slotData.itemId]) then
-		return self:GetCategoryLabel(Cache[slotData.itemId])
-	end
-
 	local bag, slot, link, quality, itemId = slotData.bag, slotData.slot, slotData.link, slotData.quality, slotData.itemId
+
+	if (Cache[itemId]) then
+		return self:GetCategoryLabel(Cache[itemId], bag, slot)
+	end
 
 	if (link) then
 		local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(link)
-		local category = nil
 
-		-- Only parse items that are Uncommon and above, and are of type BoP, BoE, and BoU
-		if (quality and quality > 1) and (bindType > 0 and bindType < 4) then
+		-- Only parse items that are Common and above, and are of type BoP, BoE, and BoU
+		if (quality and quality >= 1) and (bindType > 0 and bindType < 4) then
 
-			Scanner.owner = self
-			Scanner.bag = bag
-			Scanner.slot = slot
-			Scanner:SetOwner(UIParent, "ANCHOR_NONE")
-			Scanner:SetBagItem(bag, slot)
-			for i = 2, 6 do
-				local line = _G[_SCANNER .. "TextLeft" .. i]
-				if (not line) then
-					break
-				end
-				local msg = line:GetText()
-				if (msg) then
-					if (string_find(msg, S_ITEM_BOP)) then
-						Cache[itemId] = S_BOP
-						category = S_BOP
-						break
-					elseif (string_find(msg, S_ITEM_BOA) or string_find(msg, S_ITEM_BOA2) or string_find(msg, S_ITEM_BOA3)) then
-						Cache[itemId] = S_BOA
-						category = S_BOA
-						break
-					elseif (string_find(msg, S_ITEM_BOE)) then
-						Cache[itemId] = S_BOE
-						category = S_BOE
-						break
-					end
-				end
-			end
+			local category = self:GetItemCategory(bag, slot, itemId)
+			Cache[itemId] = category
 
-			return self:GetCategoryLabel(category)
+			return self:GetCategoryLabel(category, bag, slot)
 		end
 	end
 end
 
-function filter:GetCategoryLabel(category)
+function filter:GetItemCategory(bag, slot, itemId)
+	local category = nil
+
+	local function GetBindType(msg)
+		if (msg) then
+			if (string_find(msg, S_ITEM_BOP)) then
+				return S_BOP
+			elseif (string_find(msg, S_ITEM_BOA) or string_find(msg, S_ITEM_BOA2) or string_find(msg, S_ITEM_BOA3)) then
+				return S_BOA
+			elseif (string_find(msg, S_ITEM_BOE)) then
+				return S_BOE
+			end
+		end
+	end
+
+	if (Private.WoW10) then
+		-- New API in WoW10 means we don't need an actual frame for the tooltip
+		-- https://wowpedia.fandom.com/wiki/Patch_10.0.2/API_changes#Tooltip_Changes
+		Scanner = C_TooltipInfo_GetBagItem(bag, slot)
+		for i = 2, 6 do
+			local line = Scanner.lines[i]
+			if (not line) then
+				break
+			end
+			local bind = GetBindType(line.leftText)
+			if (bind) then
+				category = bind
+				break
+			end
+		end
+	else
+		Scanner.owner = self
+		Scanner.bag = bag
+		Scanner.slot = slot
+		Scanner:ClearLines()
+		Scanner:SetOwner(UIParent, "ANCHOR_NONE")
+		if bag == N_BANK_CONTAINER then
+			Scanner:SetInventoryItem("player", BankButtonIDToInvSlotID(slot, nil))
+		else
+			Scanner:SetBagItem(bag, slot)
+		end
+		for i = 2, 6 do
+			local line = _G[_SCANNER .. "TextLeft" .. i]
+			if (not line) then
+				break
+			end
+			local bind = GetBindType(line:GetText())
+			if (bind) then
+				category = bind
+				break
+			end
+		end
+	end
+
+	return category
+end
+
+function filter:IsItemEquipable(bag, slot)
+	local itemLocation = ItemLocation:CreateFromBagAndSlot(bag, slot)
+	if itemLocation:IsValid() then
+		-- Inventory type 0 is INVTYPE_NON_EQUIP: Non-equipable
+		return not (C_Item_GetItemInventoryType(itemLocation) == 0)
+	end
+end
+
+function filter:GetCategoryLabel(category, bag, slot)
 	if not category then return nil end
 
 	if (category == S_BOE) and self.db.profile.enableBoE then
-		return S_BOE
+		return L[S_BOE]
 	elseif (category == S_BOA) and self.db.profile.enableBoA then
-		return S_BOA
+		return L[S_BOA]
 	elseif (category == S_BOP) and self.db.profile.enableBoP then
-		return S_BOP
-	else
-		return nil
+		if (self.db.profile.onlyEquipableBoP) then
+			if (self:IsItemEquipable(bag, slot)) then
+				return L[S_BOP]
+			end
+		else
+			return L[S_BOP]
+		end
 	end
 end
 
@@ -272,7 +354,7 @@ end
 	-- and does not affect direct GitHub repo pulls.
 	local version = "@project-version@"
 	if (version:find("project%-version")) then
-		version = "Development"
+		version = "DEV"
 	end
 
 	-- WoW Client versions
@@ -288,7 +370,8 @@ end
 	Private.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
 	Private.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
 	Private.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC)
-	Private.WoW10 = version >= 100000
+	-- while the pre-patch is 100000, some APIs we need only arrive with 100002
+	Private.WoW10 = version >= 100002
 
 	-- Should mostly be used for debugging
 	Private.Print = function(self, ...)
