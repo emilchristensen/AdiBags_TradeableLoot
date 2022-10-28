@@ -1,7 +1,7 @@
 ## Interface: 100000
 
-## Title: AdiBags - BoE/BoA
-## Notes: Adds BoE/BoA filters to AdiBags.
+## Title: AdiBags - Bound
+## Notes: Adds BoE/BoA/BoP filters to AdiBags.
 ## Author: Avyiel, Spanky, Outroot
 ## Version: @project-version@
 
