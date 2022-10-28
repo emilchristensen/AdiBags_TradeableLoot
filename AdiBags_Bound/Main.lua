@@ -35,7 +35,7 @@ local Addon, Private = ...
 
 -- AdiBags namespace
 -----------------------------------------------------------
-local addon = LibStub("AceAddon-3.0"):GetAddon("AdiBags")
+local AdiBags = LibStub("AceAddon-3.0"):GetAddon("AdiBags")
 
 -- Lua API
 -----------------------------------------------------------
@@ -44,12 +44,14 @@ local string_find = string.find
 local string_split = string.split
 local tonumber = tonumber
 
-
 -- WoW API
 -----------------------------------------------------------
-local CreateFrame = _G.CreateFrame
-local GetLocale = _G.GetLocale
-local GetItemInfo = _G.GetItemInfo
+local CreateFrame = CreateFrame
+local GetLocale = GetLocale
+local GetItemInfo = GetItemInfo
+local GetBuildInfo = GetBuildInfo
+local GetAddOnInfo = GetAddOnInfo
+local GetNumAddOns = GetNumAddOns
 
 -- WoW Strings
 -----------------------------------------------------------
@@ -125,18 +127,19 @@ end)({
 	-- * You should change this code to your default locale.
 	-- * Note that you MUST include a full table for your primary/default locale!
 }, "enUS")
-Private.L = L
 
 --------------------------------------------------------------------------------
 -- Filter Setup
 --------------------------------------------------------------------------------
 
-local filter = addon:RegisterFilter("Bound", 92, "ABEvent-1.0")
+-- Register our filter with AdiBags
+local filter = AdiBags:RegisterFilter("Bound", 92, "ABEvent-1.0")
 filter.uiName = L["Bound"]
 filter.uiDesc = L["Put BoE and BoA items in their own sections."]
 
 function filter:OnInitialize()
-	self.db = addon.db:RegisterNamespace(self.filterName, {
+	-- Register the settings namespace
+	self.db = AdiBags.db:RegisterNamespace(self.filterName, {
 		profile = {
 			enableBoE = true,
 			enableBoA = true,
@@ -145,6 +148,7 @@ function filter:OnInitialize()
 	})
 end
 
+-- Setup options panel
 function filter:GetOptions()
 	return {
 		enableBoE = {
@@ -165,20 +169,20 @@ function filter:GetOptions()
 			type = "toggle",
 			order = 30,
 		},
-	}, addon:GetOptionHandler(self, false, function() return self:Update() end)
+	}, AdiBags:GetOptionHandler(self, false, function() return self:Update() end)
 end
 
 function filter:Update()
+	-- Notify myself that the filtering options have changed
 	self:SendMessage("AdiBags_FiltersChanged")
-	addon:UpdateFilters()
 end
 
 function filter:OnEnable()
-	addon:UpdateFilters()
+	AdiBags:UpdateFilters()
 end
 
 function filter:OnDisable()
-	addon:UpdateFilters()
+	AdiBags:UpdateFilters()
 end
 
 --------------------------------------------------------------------------------
