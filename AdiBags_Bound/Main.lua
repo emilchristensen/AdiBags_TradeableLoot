@@ -204,7 +204,7 @@ function filter:GetOptions()
 				},
 			},
 		},
-	}, AdiBags:GetOptionHandler(self, false, function() return self:Update() end)
+	}, AdiBags:GetOptionHandler(self, true, function() return self:Update() end)
 end
 
 function filter:Update()
