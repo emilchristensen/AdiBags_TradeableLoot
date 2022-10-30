@@ -161,7 +161,7 @@ function filter:OnInitialize()
 			enableBoE = true,
 			enableBoA = true,
 			enableBoP = false,
-			onlyEquipableBoP = Private.IsRetail or Private.IsWrath, -- not tested on classic yet
+			onlyEquipableBoP = true,
 		},
 	})
 end
@@ -200,7 +200,6 @@ function filter:GetOptions()
 					desc = L["Only filter equipable soulbound items."],
 					type = "toggle",
 					order = 20,
-					disabled = function() return not (Private.IsRetail or Private.IsWrath) end
 				},
 			},
 		},

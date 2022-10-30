@@ -1,0 +1,26 @@
+## Interface: 11403
+
+## Title: AdiBags - Bound
+## Notes: Adds BoE/BoA/BoP filters to AdiBags.
+## Author: Avyiel, Spanky, Outroot
+## Version: @project-version@
+## X-Date: @project-date-iso@
+
+## DefaultState: Enabled
+## Dependencies: AdiBags
+#@alpha@
+## OptionalDeps: BugSack, BugGrabber
+#@end-alpha@
+
+## X-Date: @project-date-iso@
+## X-Category: Bags & Inventory
+## X-License: MIT
+
+## X-Curse-Project-ID: 620793
+## X-Wago-ID: 2jK8W06y
+
+Main.lua
+
+#@debug@
+## Version: DEV
+#@end-debug@
