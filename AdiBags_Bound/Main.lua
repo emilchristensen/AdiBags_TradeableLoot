@@ -52,8 +52,7 @@ local GetItemInfo = _G.GetItemInfo
 local GetBuildInfo = _G.GetBuildInfo
 local GetAddOnInfo = _G.GetAddOnInfo
 local GetNumAddOns = _G.GetNumAddOns
-local ItemLocation = _G.ItemLocation
-local C_Item_GetItemInventoryType = _G.C_Item.GetItemInventoryType
+local C_Item_GetItemInventoryTypeByID = _G.C_Item.GetItemInventoryTypeByID
 
 -- WoW10 API
 -----------------------------------------------------------
@@ -162,7 +161,7 @@ function filter:OnInitialize()
 			enableBoE = true,
 			enableBoA = true,
 			enableBoP = false,
-			onlyEquipableBoP = true,
+			onlyEquipableBoP = Private.IsRetail or Private.IsWrath, -- not tested on classic yet
 		},
 	})
 end
@@ -201,6 +200,7 @@ function filter:GetOptions()
 					desc = L["Only filter equipable soulbound items."],
 					type = "toggle",
 					order = 20,
+					disabled = function() return not (Private.IsRetail or Private.IsWrath) end
 				},
 			},
 		},
@@ -242,7 +242,7 @@ function filter:Filter(slotData)
 	local bag, slot, link, quality, itemId = slotData.bag, slotData.slot, slotData.link, slotData.quality, slotData.itemId
 
 	if (Cache[itemId]) then
-		return self:GetCategoryLabel(Cache[itemId], bag, slot)
+		return self:GetCategoryLabel(Cache[itemId], itemId)
 	end
 
 	if (link) then
@@ -251,15 +251,15 @@ function filter:Filter(slotData)
 		-- Only parse items that are Common and above, and are of type BoP, BoE, and BoU
 		if (quality and quality >= 1) and (bindType > 0 and bindType < 4) then
 
-			local category = self:GetItemCategory(bag, slot, itemId)
+			local category = self:GetItemCategory(bag, slot)
 			Cache[itemId] = category
 
-			return self:GetCategoryLabel(category, bag, slot)
+			return self:GetCategoryLabel(category, itemId)
 		end
 	end
 end
 
-function filter:GetItemCategory(bag, slot, itemId)
+function filter:GetItemCategory(bag, slot)
 	local category = nil
 
 	local function GetBindType(msg)
@@ -311,20 +311,13 @@ function filter:GetItemCategory(bag, slot, itemId)
 				break
 			end
 		end
+		Scanner:Hide()
 	end
 
 	return category
 end
 
-function filter:IsItemEquipable(bag, slot)
-	local itemLocation = ItemLocation:CreateFromBagAndSlot(bag, slot)
-	if itemLocation:IsValid() then
-		-- Inventory type 0 is INVTYPE_NON_EQUIP: Non-equipable
-		return not (C_Item_GetItemInventoryType(itemLocation) == 0)
-	end
-end
-
-function filter:GetCategoryLabel(category, bag, slot)
+function filter:GetCategoryLabel(category, itemId)
 	if not category then return nil end
 
 	if (category == S_BOE) and self.db.profile.enableBoE then
@@ -333,13 +326,18 @@ function filter:GetCategoryLabel(category, bag, slot)
 		return L[S_BOA]
 	elseif (category == S_BOP) and self.db.profile.enableBoP then
 		if (self.db.profile.onlyEquipableBoP) then
-			if (self:IsItemEquipable(bag, slot)) then
+			if (self:IsItemEquipable(itemId)) then
 				return L[S_BOP]
 			end
 		else
 			return L[S_BOP]
 		end
 	end
+end
+
+function filter:IsItemEquipable(itemId)
+	-- Inventory type 0 is INVTYPE_NON_EQUIP: Non-equipable
+	return not (C_Item_GetItemInventoryTypeByID(itemId) == 0)
 end
 
 -- Setup the environment
