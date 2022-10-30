@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0] 2022-10-30
+### Added
+- Support for Wrath Classic
+
+### Changed
+- Equipable check is now faster and uses less memory
+
 ## [1.1.0] 2022-10-28
 ### Added
 - Support for BoP items
