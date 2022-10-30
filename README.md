@@ -7,3 +7,8 @@ be filtered by equipable status as well, so that only gear will be moved.
 **I am not the Original author of this addon**
 
 _This addon was created by "outroot" in 2012 and updated by "Spanky" until 2016._
+
+## Support & Connect
+- GitHub: [https://github.com/lucasvienna](lucasvienna)
+- Twitter: [https://twitter.com/Avyiel7](@Avyiel7)
+- PayPal: [https://paypal.me/lvienna](https://paypal.me/lvienna)

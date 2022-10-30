@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.1] 2022-10-30
+### Fixed
+- My dumb ass named the Classic TOC files wrong and it didn't release properly. This release does nothing but rectify that.
+- Rename Classic TOC files (`_` and not `-`, genius)
+
 ## [1.3.0] 2022-10-30
 ### Added
 - Support for Classic Era
