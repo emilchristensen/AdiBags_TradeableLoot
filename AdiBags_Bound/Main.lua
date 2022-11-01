@@ -238,23 +238,21 @@ local Cache = AVY_ItemBindInfoCache or {}
 AVY_ItemBindInfoCache = Cache
 
 function filter:Filter(slotData)
-	local bag, slot, link, quality, itemId = slotData.bag, slotData.slot, slotData.link, slotData.quality, slotData.itemId
+	local bag, slot, quality, itemId = slotData.bag, slotData.slot, slotData.quality, slotData.itemId
 
 	if (Cache[itemId]) then
 		return self:GetCategoryLabel(Cache[itemId], itemId)
 	end
 
-	if (link) then
-		local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(link)
+	local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType, _, _, _ = GetItemInfo(itemId)
 
-		-- Only parse items that are Common and above, and are of type BoP, BoE, and BoU
-		if (quality and quality >= 1) and (bindType > 0 and bindType < 4) then
+	-- Only parse items that are Common and above, and are of type BoP, BoE, and BoU
+	if (quality and quality >= 1) and (bindType ~= nil and bindType > 0 and bindType < 4) then
 
-			local category = self:GetItemCategory(bag, slot)
-			Cache[itemId] = category
+		local category = self:GetItemCategory(bag, slot)
+		Cache[itemId] = category
 
-			return self:GetCategoryLabel(category, itemId)
-		end
+		return self:GetCategoryLabel(category, itemId)
 	end
 end
 
