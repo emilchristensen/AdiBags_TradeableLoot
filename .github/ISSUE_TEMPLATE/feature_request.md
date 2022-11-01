@@ -1,5 +1,5 @@
 ---
-name: '\U0001F680 Feature Request'
+name: '💡 Feature Request'
 about: 'Request a feature in this project'
 title: '[FEATURE]'
 labels: 'enhancement, untriaged'
