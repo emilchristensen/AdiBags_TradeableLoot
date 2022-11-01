@@ -447,7 +447,7 @@ end
 	-- which runs our initialization methods,
 	-- and dispatches event to the addon namespace.
 	self:RegisterEvent("ADDON_LOADED")
-	self:SetScript("OnEvent", function(self, event, ...)
+	self:SetScript("OnEvent", function(frame, event, ...)
 		if (event == "ADDON_LOADED") then
 			-- Nothing happens before this has fired for your addon.
 			-- When it fires, we remove the event listener
@@ -500,4 +500,4 @@ end
 			Private:OnEvent(event, ...)
 		end
 	end)
-end)((function() return CreateFrame("Frame", nil, WorldFrame) end)())
+end)((function() return CreateFrame("Frame", Addon .. "EventFrame", UIParent) end)())
