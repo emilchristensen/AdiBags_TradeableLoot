@@ -9,6 +9,7 @@ be filtered by equipable status as well, so that only gear will be moved.
 _This addon was created by "outroot" in 2012 and updated by "Spanky" until 2016._
 
 ## Support & Connect
-- GitHub: [https://github.com/lucasvienna](lucasvienna)
+- GitHub: [https://github.com/AvyAddons](AvyAddons)
 - Twitter: [https://twitter.com/Avyiel7](@Avyiel7)
+- Patreon: [https://patreon.com/avyiel](https://patreon.com/avyiel)
 - PayPal: [https://paypal.me/lvienna](https://paypal.me/lvienna)
