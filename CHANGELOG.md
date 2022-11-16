@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.0] 2022-11-05
+### Changed
+- Bump TOC to 100002
+
 ## [1.4.0] 2022-11-05
 ### Changed
 - Removed a lot of dead code
