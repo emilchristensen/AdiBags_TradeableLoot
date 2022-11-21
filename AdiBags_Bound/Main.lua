@@ -47,11 +47,9 @@ local rawset = rawset
 local CreateFrame = _G.CreateFrame
 local GetItemInfo = _G.GetItemInfo
 local GetBuildInfo = _G.GetBuildInfo
-local C_Item_GetItemInventoryTypeByID = _G.C_Item.GetItemInventoryTypeByID
-
--- WoW10 API
------------------------------------------------------------
+local C_Item_GetItemInventoryTypeByID = C_Item and C_Item.GetItemInventoryTypeByID
 local C_TooltipInfo_GetBagItem = C_TooltipInfo and C_TooltipInfo.GetBagItem
+local TooltipUtil_SurfaceArgs = TooltipUtil and TooltipUtil.SurfaceArgs
 
 -- WoW Constants
 -----------------------------------------------------------
@@ -75,7 +73,7 @@ local L = setmetatable({}, {
 	__index = function(self, key)
 		if not self[key] then
 			--@debug@
-			print("Missing loc: "..key)
+			print("Missing loc: " .. key)
 			--@end-debug@
 			rawset(self, key, tostring(key))
 			return tostring(key)
@@ -178,7 +176,7 @@ function filter:GetOptions()
 					desc = L["Only filter equipable soulbound items."],
 					type = "toggle",
 					order = 20,
-					disabled = function () return not self.db.profile.enableBoP end,
+					disabled = function() return not self.db.profile.enableBoP end,
 				},
 			},
 		},
@@ -207,7 +205,7 @@ end
 local _SCANNER = "AVY_ScannerTooltip"
 local Scanner
 if not addon.WoW10 then
-	-- This is not needed on WoW10, since we can use C_TooltipInfo.GetBagItem
+	-- This is not needed on WoW10, since we can use C_TooltipInfo
 	Scanner = _G[_SCANNER] or CreateFrame("GameTooltip", _SCANNER, UIParent, "GameTooltipTemplate")
 end
 
@@ -254,6 +252,11 @@ function filter:GetItemCategory(bag, slot)
 		-- New API in WoW10 means we don't need an actual frame for the tooltip
 		-- https://wowpedia.fandom.com/wiki/Patch_10.0.2/API_changes#Tooltip_Changes
 		Scanner = C_TooltipInfo_GetBagItem(bag, slot)
+		-- The SurfaceArgs calls are required to assign values to the 'leftText' fields seen below.
+		TooltipUtil_SurfaceArgs(Scanner)
+		for _, line in ipairs(Scanner.lines) do
+			TooltipUtil_SurfaceArgs(line)
+		end
 		for i = 2, 6 do
 			local line = Scanner.lines[i]
 			if (not line) then
