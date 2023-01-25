@@ -13,7 +13,7 @@ in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-	
+
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -197,7 +197,7 @@ function filter:OnDisable()
 end
 
 -----------------------------------------------------------
--- Actual filter - with a cache
+-- Actual filter
 -----------------------------------------------------------
 
 -- Tooltip used for scanning.
@@ -209,26 +209,13 @@ if not addon.WoW10 then
 	Scanner = _G[_SCANNER] or CreateFrame("GameTooltip", _SCANNER, UIParent, "GameTooltipTemplate")
 end
 
--- Cache of information objects,
--- globally available so addons can share it.
-local Cache = AVY_ItemBindInfoCache or {}
-AVY_ItemBindInfoCache = Cache
-
 function filter:Filter(slotData)
 	local bag, slot, quality, itemId = slotData.bag, slotData.slot, slotData.quality, slotData.itemId
-
-	if (Cache[itemId]) then
-		return self:GetCategoryLabel(Cache[itemId], itemId)
-	end
-
 	local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType, _, _, _ = GetItemInfo(itemId)
 
 	-- Only parse items that are Common and above, and are of type BoP, BoE, and BoU
 	if (quality and quality >= 1) and (bindType ~= nil and bindType > 0 and bindType < 4) then
-
 		local category = self:GetItemCategory(bag, slot)
-		Cache[itemId] = category
-
 		return self:GetCategoryLabel(category, itemId)
 	end
 end
