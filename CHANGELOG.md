@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.3] 2023-01-22
+### Changed
+- Bump Wrath TOC to 10.0.5
+
 ## [1.5.2] 2023-01-22
 ### Changed
-- Bump Wrath TOC to 30401
+- Bump Wrath TOC to 3.4.1
 
 ## [1.5.1] 2022-11-21
 ### Fixed
@@ -14,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.5.0] 2022-11-05
 ### Changed
-- Bump Retail TOC to 100002
+- Bump Retail TOC to 10.0.2
 
 ## [1.4.0] 2022-11-05
 ### Changed
