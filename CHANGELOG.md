@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.5.3] 2023-01-22
+## [1.5.3] 2023-01-25
 ### Changed
 - Bump Wrath TOC to 10.0.5
 
