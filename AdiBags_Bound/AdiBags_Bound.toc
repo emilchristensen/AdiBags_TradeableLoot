@@ -1,4 +1,4 @@
-## Interface: 100002
+## Interface: 100005
 
 ## Title: AdiBags - Bound
 ## Notes: Adds BoE/BoA/BoP filters to AdiBags.
