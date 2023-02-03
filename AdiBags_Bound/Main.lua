@@ -118,10 +118,7 @@ L[S_BOP] = "Soulbound"
 -----------------------------------------------------------
 
 --- Whether we have 10.0.2 APIs available
-addon.IsRetail = (function()
-	local toc_version = select(4, GetBuildInfo())
-	return toc_version >= 100002
-end)()
+addon.IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
 
 -----------------------------------------------------------
