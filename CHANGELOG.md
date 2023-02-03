@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.1] 2023-02-03
+### Added
+- Filter option for Poor/Common (gray/white) BoE items added in 10.0.5
+
 ## [1.6.0] 2023-02-02
 ### Fixed
 - Removed the local cache. 
