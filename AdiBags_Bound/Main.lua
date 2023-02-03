@@ -28,6 +28,7 @@ SOFTWARE.
 --]]
 
 -- Retrive addon folder name, and our private addon namespace.
+---@type string
 local addonName, addon = ...
 
 -- AdiBags namespace
@@ -97,6 +98,8 @@ L["Put BoA, BoE, and BoP items in their own sections."] = true --uiDesc
 -- Options
 L["Enable BoE"] = true
 L["Check this if you want a section for BoE items."] = true
+L["Filter Poor/Common BoE"] = true
+L["Also filter Poor (gray) and Common (white) quality BoE items."] = true
 L["Enable BoA"] = true
 L["Check this if you want a section for BoA items."] = true
 L["Soulbound"] = true
@@ -115,7 +118,7 @@ L[S_BOP] = "Soulbound"
 -----------------------------------------------------------
 
 --- Whether we have 10.0.2 APIs available
-addon.WoW10 = (function()
+addon.IsRetail = (function()
 	local toc_version = select(4, GetBuildInfo())
 	return toc_version >= 100002
 end)()
@@ -135,6 +138,7 @@ function filter:OnInitialize()
 	self.db = AdiBags.db:RegisterNamespace(self.filterName, {
 		profile = {
 			enableBoE = true,
+			grayAndWhiteBoE = false,
 			enableBoA = true,
 			enableBoP = false,
 			onlyEquipableBoP = true,
@@ -151,6 +155,13 @@ function filter:GetOptions()
 			type = "toggle",
 			width = "double",
 			order = 10,
+		},
+		grayAndWhiteBoE = {
+			name = L["Filter Poor/Common BoE"],
+			desc = L["Also filter Poor (gray) and Common (white) quality BoE items."],
+			type = "toggle",
+			width = "double",
+			order = 15,
 		},
 		enableBoA = {
 			name = L["Enable BoA"],
@@ -204,7 +215,7 @@ end
 -- Let's keep this name for all scanner addons.
 local _SCANNER = "AVY_ScannerTooltip"
 local Scanner
-if not addon.WoW10 then
+if not addon.IsRetail then
 	-- This is not needed on WoW10, since we can use C_TooltipInfo
 	Scanner = _G[_SCANNER] or CreateFrame("GameTooltip", _SCANNER, UIParent, "GameTooltipTemplate")
 end
@@ -213,8 +224,9 @@ function filter:Filter(slotData)
 	local bag, slot, quality, itemId = slotData.bag, slotData.slot, slotData.quality, slotData.itemId
 	local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType, _, _, _ = GetItemInfo(itemId)
 
-	-- Only parse items that are Common and above, and are of type BoP, BoE, and BoU
-	if (quality and quality >= 1) and (bindType ~= nil and bindType > 0 and bindType < 4) then
+	-- Only parse items that are Common (1) and above, and are of type BoP, BoE, and BoU
+	local junk = quality ~= nil and quality == 0
+	if (not junk or (junk and self.db.profile.grayAndWhiteBoE)) or (bindType ~= nil and bindType > 0 and bindType < 4) then
 		local category = self:GetItemCategory(bag, slot)
 		return self:GetCategoryLabel(category, itemId)
 	end
@@ -235,7 +247,7 @@ function filter:GetItemCategory(bag, slot)
 		end
 	end
 
-	if (addon.WoW10) then
+	if (addon.IsRetail) then
 		-- New API in WoW10 means we don't need an actual frame for the tooltip
 		-- https://wowpedia.fandom.com/wiki/Patch_10.0.2/API_changes#Tooltip_Changes
 		Scanner = C_TooltipInfo_GetBagItem(bag, slot)
