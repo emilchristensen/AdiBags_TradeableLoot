@@ -253,7 +253,7 @@ function filter:GetItemCategory(bag, slot)
 		for _, line in ipairs(Scanner.lines) do
 			TooltipUtil_SurfaceArgs(line)
 		end
-		for i = 2, 6 do
+		for i = 2, 4 do
 			local line = Scanner.lines[i]
 			if (not line) then
 				break
@@ -275,7 +275,7 @@ function filter:GetItemCategory(bag, slot)
 		else
 			Scanner:SetBagItem(bag, slot)
 		end
-		for i = 2, 6 do
+		for i = 2, 4 do
 			local line = _G[_SCANNER .. "TextLeft" .. i]
 			if (not line) then
 				break
