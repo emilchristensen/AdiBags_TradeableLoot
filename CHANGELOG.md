@@ -1,8 +1,12 @@
 # AdiBags Bound Change Log
 All notable changes to this project will be documented in this file. Be aware that the [Unreleased] features are not yet available in the official tagged builds.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/) 
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [1.6.2] 2023-03-15
+### Fixed
+- Prevent tradable recipes from being wrongly categorized as BoE
 
 ## [1.6.1] 2023-02-03
 ### Added
@@ -10,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.6.0] 2023-02-02
 ### Fixed
-- Removed the local cache. 
+- Removed the local cache.
 
 API calls are cached client-side anyway, and this fixes a bug where equiping a
 BoE item would not update that item's category, so it would stay in BoE even
