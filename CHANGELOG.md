@@ -1,8 +1,11 @@
 # AdiBags Bound Change Log
 All notable changes to this project will be documented in this file. Be aware that the [Unreleased] features are not yet available in the official tagged builds.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/)
-and this project adheres to [Semantic Versioning](http://semver.org/).
+The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [1.6.3] 2023-03-22
+### Changed
+- Bump Retail TOC to 10.0.5
 
 ## [1.6.2] 2023-03-15
 ### Fixed
@@ -22,7 +25,7 @@ though it is now a Soulbound item.
 
 ## [1.5.3] 2023-01-25
 ### Changed
-- Bump Wrath TOC to 10.0.5
+- Bump Retail TOC to 10.0.5
 
 ## [1.5.2] 2023-01-22
 ### Changed
