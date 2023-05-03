@@ -26,7 +26,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 --]]
-
 -- Retrive addon folder name, and our private addon namespace.
 ---@type string
 local addonName, addon = ...
@@ -92,8 +91,8 @@ local L = setmetatable({}, {
 
 -- If we eventually localize this addon, then GetLocale() and some elseif's will
 -- come into play here. For now, only enUS
-L["Bound"] = true -- uiName
-L["Put BoA, BoE, and BoP items in their own sections."] = true --uiDesc
+L["Bound"] = true                                              -- uiName
+L["Put BoA, BoE, and BoP items in their own sections."] = true -- uiDesc
 
 -- Options
 L["Enable BoE"] = true
@@ -117,7 +116,7 @@ L[S_BOP] = "Soulbound"
 -- This mostly contains methods we always want available
 -----------------------------------------------------------
 
---- Whether we have 10.0.2 APIs available
+--- Whether we have C_TooltipInfo APIs available
 addon.IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
 
@@ -245,14 +244,7 @@ function filter:GetItemCategory(bag, slot)
 	end
 
 	if (addon.IsRetail) then
-		-- New API in WoW10 means we don't need an actual frame for the tooltip
-		-- https://wowpedia.fandom.com/wiki/Patch_10.0.2/API_changes#Tooltip_Changes
 		Scanner = C_TooltipInfo_GetBagItem(bag, slot)
-		-- The SurfaceArgs calls are required to assign values to the 'leftText' fields seen below.
-		TooltipUtil_SurfaceArgs(Scanner)
-		for _, line in ipairs(Scanner.lines) do
-			TooltipUtil_SurfaceArgs(line)
-		end
 		for i = 2, 4 do
 			local line = Scanner.lines[i]
 			if (not line) then
