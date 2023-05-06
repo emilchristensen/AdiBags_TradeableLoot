@@ -5,6 +5,7 @@
 ## Author: Avyiel, Spanky, Outroot
 ## Version: @project-version@
 ## X-Date: @project-date-iso@
+## IconTexture: Interface\Icons\inv_misc_bag_15
 
 ## DefaultState: Enabled
 ## Dependencies: AdiBags
