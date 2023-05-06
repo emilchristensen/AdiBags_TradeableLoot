@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file. Be aware th
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.1] 2023-05-06
+### Added
+- Addon icon (shows up in addon list in-game)
+
 ## [1.7.0] 2023-05-03
 ### Changed
 - Bump Retail TOC to 10.1.0
