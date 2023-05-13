@@ -46,10 +46,8 @@ local rawset = rawset
 -----------------------------------------------------------
 local CreateFrame = _G.CreateFrame
 local GetItemInfo = _G.GetItemInfo
-local GetBuildInfo = _G.GetBuildInfo
 local C_Item_GetItemInventoryTypeByID = C_Item and C_Item.GetItemInventoryTypeByID
 local C_TooltipInfo_GetBagItem = C_TooltipInfo and C_TooltipInfo.GetBagItem
-local TooltipUtil_SurfaceArgs = TooltipUtil and TooltipUtil.SurfaceArgs
 
 -- WoW Constants
 -----------------------------------------------------------
@@ -244,9 +242,9 @@ function filter:GetItemCategory(bag, slot)
 	end
 
 	if (addon.IsRetail) then
-		Scanner = C_TooltipInfo_GetBagItem(bag, slot)
+		local tooltipInfo = C_TooltipInfo_GetBagItem(bag, slot)
 		for i = 2, 4 do
-			local line = Scanner.lines[i]
+			local line = tooltipInfo.lines[i]
 			if (not line) then
 				break
 			end
