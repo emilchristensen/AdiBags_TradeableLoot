@@ -89,12 +89,6 @@ local L = setmetatable({}, {
 L["TradeableLoot"] = true                                              -- uiName
 L["Put BoE and items with a loot Timer in their own sections."] = true -- uiDesc
 
--- Options
-L["Enable BoE"] = true
-L["Check this if you want a section for BoE items."] = true
-L["Enable loot with Timer"] = true
-L["Check this if you want a section for items with a loot timer."] = true
-
 -- Categories
 L[S_BOE] = true
 L[S_TIMER] = true
@@ -126,39 +120,6 @@ function filter:OnInitialize()
 	})
 end
 
--- Setup options panel
-function filter:GetOptions()
-	return {
-		enableBoE = {
-			name = L["Enable BoE"],
-			desc = L["Check this if you want a section for BoE items."],
-			type = "toggle",
-			width = "double",
-			order = 10,
-		},
-		enableTimer = {
-			name = L["Enable loot with Timer"],
-			desc = L["Check this if you want a section for items with a loot timer."],
-			type = "toggle",
-			width = "double",
-			order = 15,
-		},
-	}, AdiBags:GetOptionHandler(self, true, function() return self:Update() end)
-end
-
-function filter:Update()
-	-- Notify myself that the filtering options have changed
-	self:SendMessage("AdiBags_FiltersChanged")
-end
-
-function filter:OnEnable()
-	AdiBags:UpdateFilters()
-end
-
-function filter:OnDisable()
-	AdiBags:UpdateFilters()
-end
-
 -----------------------------------------------------------
 -- Actual filter
 -----------------------------------------------------------
@@ -178,7 +139,7 @@ function filter:Filter(slotData)
 
 	-- Only parse items that are Uncommon (2) and above, and are of type BoP, BoE
 	local junk = quality ~= nil and quality <= 1
-	if (not junk or (junk and self.db.profile.grayAndWhiteBoE)) or (bindType ~= nil and bindType > 0 and bindType < 3) then
+	if (not junk) or (bindType ~= nil and bindType > 0 and bindType < 3) then
 		local category = self:GetItemCategory(bag, slot)
 		return self:GetCategoryLabel(category, itemId)
 	end
