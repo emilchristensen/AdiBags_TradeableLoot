@@ -38,8 +38,8 @@ body:
 - type: checkboxes
   id: testing
   attributes:
-    label: Tested with only AdiBags_Bound
-    description: Did you try having AdiBags and AdiBags_Bound as the only enabled addons and everything else (especially other AdiBags plugins) disabled?
+    label: Tested with only AdiBags_TradeableLoot
+    description: Did you try having AdiBags and AdiBags_TradeableLoot as the only enabled addons and everything else (especially other AdiBags plugins) disabled?
     options:
       - label: "Yes"
       - label: "No"

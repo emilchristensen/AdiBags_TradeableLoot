@@ -2,6 +2,7 @@
 
 The MIT License (MIT)
 
+Copyright (c) 2023 Ella36
 Copyright (c) 2022 Lucas Vienna (Avyiel) <dev@lucasvienna.dev>
 Copyright (c) 2021 Lars Norberg
 Copyright (c) 2016 Spanky
@@ -26,7 +27,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 --]]
--- Retrive addon folder name, and our private addon namespace.
+-- Retrieve addon folder name, and our private addon namespace.
 ---@type string
 local addonName, addon = ...
 
@@ -51,19 +52,13 @@ local C_TooltipInfo_GetBagItem = C_TooltipInfo and C_TooltipInfo.GetBagItem
 
 -- WoW Constants
 -----------------------------------------------------------
-local S_ITEM_BOP = ITEM_SOULBOUND
-local S_ITEM_BOA = ITEM_ACCOUNTBOUND
-local S_ITEM_BOA2 = ITEM_BNETACCOUNTBOUND
-local S_ITEM_BOA3 = ITEM_BIND_TO_BNETACCOUNT
 local S_ITEM_BOE = ITEM_BIND_ON_EQUIP
 local S_ITEM_TIMER = string.format(BIND_TRADE_TIME_REMAINING, ".*")
 local N_BANK_CONTAINER = BANK_CONTAINER
 
 -- Addon Constants
 -----------------------------------------------------------
-local S_BOA = "BoA"
 local S_BOE = "BoE"
-local S_BOP = "BoP"
 local S_TIMER = "Timer"
 
 -- Localization system
@@ -91,30 +86,18 @@ local L = setmetatable({}, {
 
 -- If we eventually localize this addon, then GetLocale() and some elseif's will
 -- come into play here. For now, only enUS
-L["Bound"] = true                                              -- uiName
-L["Put BoA, BoE, BoP items and items with a loot Timer in their own sections."] = true -- uiDesc
+L["TradeableLoot"] = true                                              -- uiName
+L["Put BoE and items with a loot Timer in their own sections."] = true -- uiDesc
 
 -- Options
 L["Enable BoE"] = true
 L["Check this if you want a section for BoE items."] = true
 L["Enable loot with Timer"] = true
 L["Check this if you want a section for items with a loot timer."] = true
-L["Filter Poor/Common BoE"] = true
-L["Also filter Poor (gray) and Common (white) quality BoE items."] = true
-L["Enable BoA"] = true
-L["Check this if you want a section for BoA items."] = true
-L["Soulbound"] = true
-L["Enable Soulbound"] = true
-L["Check this if you want a section for BoP items."] = true
-L["Only Equipable"] = true
-L["Only filter equipable soulbound items."] = true
-
 
 -- Categories
-L[S_BOA] = true
 L[S_BOE] = true
-L[S_BOP] = "Soulbound"
-L[S_TIMER] = "Timer"
+L[S_TIMER] = true
 
 -- Private Default API
 -- This mostly contains methods we always want available
@@ -129,9 +112,9 @@ addon.IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 -----------------------------------------------------------
 
 -- Register our filter with AdiBags
-local filter = AdiBags:RegisterFilter("Bound", 70, "ABEvent-1.0")
-filter.uiName = L["Bound"]
-filter.uiDesc = L["Put BoA, BoE, BoP items and items with a loot Timer in their own sections."]
+local filter = AdiBags:RegisterFilter("TradeableLoot", 70, "ABEvent-1.0")
+filter.uiName = L["TradeableLoot"]
+filter.uiDesc = L["Put BoE and items with a loot Timer in their own sections."]
 
 function filter:OnInitialize()
 	-- Register the settings namespace
@@ -139,10 +122,6 @@ function filter:OnInitialize()
 		profile = {
 			enableBoE = true,
 			enableTimer = true,
-			grayAndWhiteBoE = false,
-			enableBoA = true,
-			enableBoP = false,
-			onlyEquipableBoP = true,
 		},
 	})
 end
@@ -157,47 +136,12 @@ function filter:GetOptions()
 			width = "double",
 			order = 10,
 		},
-		grayAndWhiteBoE = {
-			name = L["Filter Poor/Common BoE"],
-			desc = L["Also filter Poor (gray) and Common (white) quality BoE items."],
-			type = "toggle",
-			width = "double",
-			order = 15,
-		},
-		enableBoA = {
-			name = L["Enable BoA"],
-			desc = L["Check this if you want a section for BoA items."],
-			type = "toggle",
-			width = "double",
-			order = 20,
-		},
 		enableTimer = {
 			name = L["Enable loot with Timer"],
 			desc = L["Check this if you want a section for items with a loot timer."],
 			type = "toggle",
 			width = "double",
-			order = 25,
-		},
-		bound = {
-			name = L["Soulbound"],
-			desc = "Soulbound stuff",
-			type = "group",
-			inline = true,
-			args = {
-				enableBoP = {
-					name = L["Enable Soulbound"],
-					desc = L["Check this if you want a section for BoP items."],
-					type = "toggle",
-					order = 10,
-				},
-				onlyEquipableBoP = {
-					name = L["Only Equipable"],
-					desc = L["Only filter equipable soulbound items."],
-					type = "toggle",
-					order = 20,
-					disabled = function() return not self.db.profile.enableBoP end,
-				},
-			},
+			order = 15,
 		},
 	}, AdiBags:GetOptionHandler(self, true, function() return self:Update() end)
 end
@@ -232,9 +176,9 @@ function filter:Filter(slotData)
 	local bag, slot, quality, itemId = slotData.bag, slotData.slot, slotData.quality, slotData.itemId
 	local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType, _, _, _ = GetItemInfo(itemId)
 
-	-- Only parse items that are Common (1) and above, and are of type BoP, BoE, and BoU
-	local junk = quality ~= nil and quality == 0
-	if (not junk or (junk and self.db.profile.grayAndWhiteBoE)) or (bindType ~= nil and bindType > 0 and bindType < 4) then
+	-- Only parse items that are Uncommon (2) and above, and are of type BoP, BoE
+	local junk = quality ~= nil and quality <= 1
+	if (not junk or (junk and self.db.profile.grayAndWhiteBoE)) or (bindType ~= nil and bindType > 0 and bindType < 3) then
 		local category = self:GetItemCategory(bag, slot)
 		return self:GetCategoryLabel(category, itemId)
 	end
@@ -245,11 +189,7 @@ function filter:GetItemCategory(bag, slot)
 
 	local function GetBindType(msg)
 		if (msg) then
-			if (string_find(msg, S_ITEM_BOP)) then
-				return S_BOP
-			elseif (string_find(msg, S_ITEM_BOA) or string_find(msg, S_ITEM_BOA2) or string_find(msg, S_ITEM_BOA3)) then
-				return S_BOA
-			elseif (string_find(msg, S_ITEM_BOE)) then
+			if (string_find(msg, S_ITEM_BOE)) then
 				return S_BOE
 			elseif (string_find(msg, S_ITEM_TIMER)) then
 				return S_TIMER
@@ -260,7 +200,7 @@ function filter:GetItemCategory(bag, slot)
 	if (addon.IsRetail) then
 		-- Untested with S_ITEM_TIMER
 		local tooltipInfo = C_TooltipInfo_GetBagItem(bag, slot)
-		for i=_G[_SCANNER]:NumLines(),2,-1 do
+		for i=2,_G[_SCANNER]:NumLines() do
 			local line = tooltipInfo.lines[i]
 			if (not line) then
 				break
@@ -282,8 +222,7 @@ function filter:GetItemCategory(bag, slot)
 		else
 			Scanner:SetBagItem(bag, slot)
 		end
-		-- Iterate backwards so it hits tradeable before BoP or BoE
-		for i=_G[_SCANNER]:NumLines(),2,-1 do
+		for i=2,_G[_SCANNER]:NumLines() do
 			local line = _G[_SCANNER .. "TextLeft" .. i]
 			if (not line) then
 				break
@@ -305,22 +244,7 @@ function filter:GetCategoryLabel(category, itemId)
 
 	if (category == S_BOE) and self.db.profile.enableBoE then
 		return L[S_BOE]
-	elseif (category == S_BOA) and self.db.profile.enableBoA then
-		return L[S_BOA]
-	elseif (category == S_BOP) and self.db.profile.enableBoP then
-		if (self.db.profile.onlyEquipableBoP) then
-			if (self:IsItemEquipable(itemId)) then
-				return L[S_BOP]
-			end
-		else
-			return L[S_BOP]
-		end
 	elseif (category == S_TIMER) and self.db.profile.enableTimer then
 		return L[S_TIMER]
 	end
-end
-
-function filter:IsItemEquipable(itemId)
-	-- Inventory type 0 is INVTYPE_NON_EQUIP: Non-equipable
-	return not (C_Item_GetItemInventoryTypeByID(itemId) == 0)
 end
