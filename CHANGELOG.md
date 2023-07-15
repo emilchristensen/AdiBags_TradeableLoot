@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file. Be aware th
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.4] 2023-07-15
+### Fixed
+- Permanently fix the intermitent bug when depositting materials in the bank.
+### Changed
+- Bump Retail TOC to 10.1.0
+- Bump Wrath TOC to 3.4.2
+
 ## [1.7.2] 2023-05-13
 ### Fixed
 - Tentatively fix the intermitent bugs cropping up when depositing materials in the bank.
