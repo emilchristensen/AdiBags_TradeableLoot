@@ -243,6 +243,7 @@ function filter:GetItemCategory(bag, slot)
 
 	if (addon.IsRetail) then
 		local tooltipInfo = C_TooltipInfo_GetBagItem(bag, slot)
+		if not tooltipInfo then return end
 		for i = 2, 4 do
 			local line = tooltipInfo.lines[i]
 			if (not line) then
