@@ -126,7 +126,7 @@ end
 
 -- Tooltip used for scanning.
 -- Let's keep this name for all scanner addons.
-local _SCANNER = "AVY_ScannerTooltip"
+local _SCANNER = "TradeableLoot_ScannerTooltip"
 local Scanner
 if not addon.IsRetail then
 	-- This is not needed on WoW10, since we can use C_TooltipInfo
