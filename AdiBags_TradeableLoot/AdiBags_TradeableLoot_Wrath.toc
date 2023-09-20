@@ -1,4 +1,4 @@
-## Interface: 30401
+## Interface: 30402
 
 ## Title: AdiBags - TradeableLoot
 ## Notes: Adds BoE/BoA/BoP filters to AdiBags.
