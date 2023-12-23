@@ -161,7 +161,7 @@ function filter:GetItemCategory(bag, slot)
 	if (addon.IsRetail) then
 		-- Untested with S_ITEM_TIMER
 		local tooltipInfo = C_TooltipInfo_GetBagItem(bag, slot)
-		for i=2,_G[_SCANNER]:NumLines() do
+		for i=2,#tooltipInfo.lines do
 			local line = tooltipInfo.lines[i]
 			if (not line) then
 				break
